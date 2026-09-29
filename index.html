@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>sho-app</title>
+<style>
+:root{--bg:#10171b;--card:#18242a;--line:#2d3f47;--text:#eaf3f6;--muted:#9db3bb;--accent:#5fb3c9}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#1f343c,var(--bg) 60%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;flex-direction:column;align-items:center;padding:48px 16px}
+h1{font-size:34px;margin:0 0 6px;letter-spacing:.5px}
+.lead{color:var(--muted);margin:0 0 28px;font-size:14px}
+.card{display:block;width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;color:inherit;text-decoration:none;transition:.15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card b{font-size:20px}
+.card p{color:var(--muted);margin:8px 0 0;line-height:1.7;font-size:14px}
+.tag{display:inline-block;margin-top:10px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+footer{margin-top:auto;padding-top:40px;color:#6f858d;font-size:12px}
+</style>
+</head>
+<body>
+  <h1>sho-app</h1>
+  <p class="lead">つくったアプリの置き場所です。</p>
+  <a class="card" href="drone/">
+    <b>🛩 ドローン測量シミュレーター</b>
+    <p>操縦・安全判断・撮影計画・写真測量を、3D空間で体験しながら学べる教材アプリです。</p>
+    <span class="tag">パスワードが必要です</span>
+  </a>
+  <footer>2026 (C) Shotaro Kai</footer>
+</body>
+</html>
