@@ -10,8 +10,20 @@
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#1f343c,var(--bg) 60%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px}
 h1{font-size:28px;margin:0 0 20px;letter-spacing:.5px}
-.namecard{width:100%;max-width:340px}
-.namecard img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+.namecard{width:100%;max-width:340px;perspective:1200px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:max-width .35s ease;outline:none}
+.namecard.wide{max-width:560px}
+.ncInner{position:relative;transform-style:preserve-3d;will-change:transform}
+.ncInner img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45));user-select:none;-webkit-user-drag:none}
+/* メタルの輝き：画像の形で切り抜いた光の帯が、ゆっくり斜めに走る */
+.ncShine{position:absolute;inset:0;pointer-events:none;opacity:0;-webkit-mask:var(--m) center/100% 100% no-repeat;mask:var(--m) center/100% 100% no-repeat;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.08) 40%,rgba(255,255,255,.62) 49%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.62) 51%,rgba(255,255,255,.08) 60%,transparent 70%);background-size:300% 100%;background-position:120% 0;mix-blend-mode:screen}
+.ncShine.go{animation:ncShine 2.2s cubic-bezier(.45,.05,.3,1)}
+@keyframes ncShine{0%{background-position:120% 0;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:-20% 0;opacity:0}}
+.ncDots{display:flex;justify-content:center;gap:7px;margin-top:12px}
+.ncDots i{width:7px;height:7px;border-radius:50%;background:#3a4d55;transition:background .2s}
+.ncDots i.on{background:#9fc3cd}
+.ncHint{text-align:center;color:#6f858d;font-size:11px;margin-top:6px}
+@media(prefers-reduced-motion:reduce){.ncShine.go{animation:none}}
 .box{width:100%;max-width:520px;margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
 .box h2{font-size:15px;margin:0 0 8px;color:var(--accent)}
 .box ul{margin:0;padding-left:1.2em;line-height:1.9}
@@ -23,7 +35,11 @@ footer{margin-top:auto;padding-top:36px;color:#6f858d;font-size:12px}
 </head>
 <body>
   <h1>Profile</h1>
-  <div class="namecard"><img src="card.webp" width="900" height="574" alt="名刺：シビルテックAIオーケストレイター Shotaro Kai（カイ ショウタロウ）"></div>
+  <div class="namecard" id="nc" role="button" tabindex="0" aria-label="名刺（押すとめくれてプロフィールを表示）">
+    <div class="ncInner" id="ncInner"><img id="ncImg" src="card.webp" width="900" height="574" alt="名刺：シビルテックAIオーケストレイター Shotaro Kai（カイ ショウタロウ）"><div class="ncShine" id="ncShine"></div></div>
+    <div class="ncDots"><i class="on"></i><i></i><i></i></div>
+    <div class="ncHint">タップでめくれます</div>
+  </div>
   <div class="box">
     <h2>つくったアプリ</h2>
     <ul>
@@ -33,5 +49,31 @@ footer{margin-top:auto;padding-top:36px;color:#6f858d;font-size:12px}
   </div>
   <a class="back" href="../">← トップへ戻る</a>
   <footer>2026 (C) Shotaro Kai</footer>
+<script>
+(()=>{
+  const faces=[
+    {src:"card.webp",w:900,h:574,wide:false,alt:"名刺：シビルテックAIオーケストレイター Shotaro Kai（カイ ショウタロウ）"},
+    {src:"prof1.webp",w:1100,h:641,wide:true,alt:"プロフィール 1/2：1997 工業高校在学中、独学で3次元グラフィックスの研究を開始。1999 東京都で、日本IBM本社IT関連部門の部長に1年間師事。2003 日向市の株式会社内山建設在籍時、「現場を全て3D化して管理する」という概念を考案。表彰され、建設新聞などに掲載。2006 現場事務所を太陽光発電で運営するシステムを構築。2016 九州建設マネジメントセンターよりICT専用機を特別に貸与される。"},
+    {src:"prof2.webp",w:1100,h:641,wide:true,alt:"プロフィール 2/2：2018 自費でドローン2台を購入し、80億円の現場で現場測量・写真管理を実施。2022 宮崎河川国道事務所でPPP業務として日南油津道路を担当。2025 第8回インフラメンテナンス大賞「国土交通省優秀賞」受賞。2026 シビルテックAIオーケストレイターとして、毎月10本以上のアプリを制作。"}
+  ];
+  faces.forEach(f=>{const i=new Image();i.src=f.src;});   // 先に読み込んでおく
+  const nc=document.getElementById("nc"),inner=document.getElementById("ncInner"),img=document.getElementById("ncImg"),shine=document.getElementById("ncShine"),dots=[...nc.querySelectorAll(".ncDots i")];
+  let idx=0,busy=false;
+  const setMask=()=>shine.style.setProperty("--m",`url("${faces[idx].src}")`);setMask();
+  const anim=(from,to,ms,ease)=>inner.animate([{transform:`rotateY(${from}deg)`},{transform:`rotateY(${to}deg)`}],{duration:ms,easing:ease,fill:"forwards"}).finished;
+  async function flip(){
+    if(busy)return;busy=true;shine.classList.remove("go");
+    await anim(0,90,260,"ease-in");
+    idx=(idx+1)%faces.length;const f=faces[idx];
+    img.src=f.src;img.width=f.w;img.height=f.h;img.alt=f.alt;nc.classList.toggle("wide",f.wide);setMask();
+    dots.forEach((d,i)=>d.classList.toggle("on",i===idx));
+    await anim(-90,0,320,"ease-out");busy=false;
+  }
+  nc.addEventListener("click",flip);
+  nc.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();}});
+  // 5〜10秒に1回、メタルが重厚に輝く
+  (function loop(){setTimeout(()=>{if(!busy&&!document.hidden){shine.classList.remove("go");void shine.offsetWidth;shine.classList.add("go");}loop();},5000+Math.random()*5000);})();
+})();
+</script>
 </body>
 </html>
