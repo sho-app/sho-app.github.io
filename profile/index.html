@@ -11,14 +11,13 @@
 body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#1f343c,var(--bg) 60%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px}
 h1{font-size:28px;margin:0 0 20px;letter-spacing:.5px}
 .namecard{width:100%;max-width:340px;perspective:1200px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:max-width .35s ease;outline:none}
-.namecard.wide{max-width:560px}
 .ncInner{position:relative;transform-style:preserve-3d;will-change:transform}
 .ncInner img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45));user-select:none;-webkit-user-drag:none}
 /* メタルの輝き：画像の形で切り抜いた光の帯が、ゆっくり斜めに走る */
 .ncShine{position:absolute;inset:0;pointer-events:none;opacity:0;-webkit-mask:var(--m) center/100% 100% no-repeat;mask:var(--m) center/100% 100% no-repeat;
-  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.08) 40%,rgba(255,255,255,.62) 49%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.62) 51%,rgba(255,255,255,.08) 60%,transparent 70%);background-size:300% 100%;background-position:120% 0;mix-blend-mode:screen}
-.ncShine.go{animation:ncShine 2.2s cubic-bezier(.45,.05,.3,1)}
-@keyframes ncShine{0%{background-position:120% 0;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:-20% 0;opacity:0}}
+  background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,.04) 38%,rgba(255,255,255,.16) 46%,rgba(255,255,255,.24) 50%,rgba(255,255,255,.16) 54%,rgba(255,255,255,.04) 62%,transparent 72%);background-size:300% 100%;background-position:120% 0;mix-blend-mode:screen}
+.ncShine.go{animation:ncShine 4.5s cubic-bezier(.4,0,.2,1)}
+@keyframes ncShine{0%{background-position:120% 0;opacity:0}25%{opacity:1}75%{opacity:1}100%{background-position:-20% 0;opacity:0}}
 .ncDots{display:flex;justify-content:center;gap:7px;margin-top:12px}
 .ncDots i{width:7px;height:7px;border-radius:50%;background:#3a4d55;transition:background .2s}
 .ncDots i.on{background:#9fc3cd}
@@ -71,8 +70,8 @@ footer{margin-top:auto;padding-top:36px;color:#6f858d;font-size:12px}
   }
   nc.addEventListener("click",flip);
   nc.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();}});
-  // 5〜10秒に1回、メタルが重厚に輝く
-  (function loop(){setTimeout(()=>{if(!busy&&!document.hidden){shine.classList.remove("go");void shine.offsetWidth;shine.classList.add("go");}loop();},5000+Math.random()*5000);})();
+  // 10秒前後に1回、メタルが静かにゆっくり輝く
+  (function loop(){setTimeout(()=>{if(!busy&&!document.hidden){shine.classList.remove("go");void shine.offsetWidth;shine.classList.add("go");}loop();},8500+Math.random()*3000);})();   // 10秒前後（8.5〜11.5秒）
 })();
 </script>
 </body>
